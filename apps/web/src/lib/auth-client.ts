@@ -1,11 +1,11 @@
+import { config } from "@growserver/config";
 import { createAuthClient } from "better-auth/client";
-import { createAuthClient as createAuthClientVue } from "better-auth/vue";
 import {
-  usernameClient,
   adminClient,
   emailOTPClient,
+  usernameClient,
 } from "better-auth/client/plugins";
-import { config } from "@growserver/config";
+import { createAuthClient as createAuthClientVue } from "better-auth/vue";
 
 const getBaseURL = () => {
   if (typeof window !== "undefined") {
@@ -24,6 +24,3 @@ export const authVue = createAuthClientVue({
   baseURL: getBaseURL(),
   plugins: [usernameClient(), adminClient(), emailOTPClient()],
 });
-
-
-

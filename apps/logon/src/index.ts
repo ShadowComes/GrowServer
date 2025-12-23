@@ -1,8 +1,7 @@
+import { config } from "@growserver/config";
+import logger from "@growserver/logger";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import { config, logon } from "@growserver/config";
-import { createServer } from "https";
-import logger from "@growserver/logger";
 
 async function init() {
   const app = new Hono();
@@ -30,7 +29,6 @@ async function init() {
     return ctx.body(str);
   });
 
-  const ssl = logon();
 
   if (process.env.RUNTIME_ENV === "node") {
     serve(

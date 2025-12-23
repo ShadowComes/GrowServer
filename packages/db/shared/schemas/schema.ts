@@ -52,8 +52,17 @@ const verificationSchema = new Schema({
   updatedAt:  { type: Date, required: true, default: Date.now },
 }, { timestamps: true, collection: "verification" });
 
+const apiKeySchema = new Schema({
+  userId:    { type: String, required: true, index: true },
+  name:      { type: String, required: true },
+  key:       { type: String, required: true, unique: true },
+  expiresAt: { type: Date },
+  createdAt: { type: Date, required: true, default: Date.now },
+  updatedAt: { type: Date, required: true, default: Date.now },
+}, { timestamps: true, collection: "apikey" });
+
 const playerSchema = new Schema({
-  name: { 
+  name: {
     type:      String,
     required:  true,
     unique:    true,
@@ -92,7 +101,7 @@ const worldSchema = new Schema({
   name: {
     type:      String,
     required:  true,
-    uppercase: true, 
+    uppercase: true,
     unique:    true,
     index:     true
   },
@@ -149,5 +158,4 @@ export const UserModel = models.User || model("User", userSchema);
 export const SessionModel = models.Session || model("Session", sessionSchema);
 export const AccountModel = models.Account || model("Account", accountSchema);
 export const VerificationModel = models.Verification || model("Verification", verificationSchema);
-
-
+export const ApiKeyModel = models.ApiKey || model("ApiKey", apiKeySchema);

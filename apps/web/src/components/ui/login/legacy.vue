@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ref, reactive } from "vue";
-import { z } from "zod";
 import { authVue } from "@/lib/auth-client";
+import { reactive, ref } from "vue";
+import { z } from "zod";
 
 const loginSchema = z.object({
   growId: z
@@ -73,8 +73,9 @@ async function onFormSubmit() {
       showToast(error.message || "Login failed", "error");
     } else {
       showToast("Login successful!", "success");
+
       setTimeout(() => {
-        window.location.href = "/player/login/dashboard";
+        window.location.href = `/player/growid/login/validate`;
       }, 1000);
     }
   } catch (error) {
@@ -87,7 +88,8 @@ async function onFormSubmit() {
 
 <template>
   <div class="toast toast-top toast-end z-50">
-    <div v-for="toast in toasts" :key="toast.id" class="alert" :class="toast.type === 'success' ? 'alert-success' : 'alert-error'">
+    <div v-for="toast in toasts" :key="toast.id" class="alert"
+      :class="toast.type === 'success' ? 'alert-success' : 'alert-error'">
       <span>{{ toast.message }}</span>
     </div>
   </div>
@@ -102,15 +104,8 @@ async function onFormSubmit() {
             <label class="label" for="growId">
               <span class="label-text">GrowID</span>
             </label>
-            <input
-              id="growId"
-              name="growId"
-              v-model="formData.growId"
-              type="text"
-              placeholder="Enter your GrowID"
-              class="input input-bordered w-full"
-              :class="{ 'input-error': errors.growId }"
-            />
+            <input id="growId" name="growId" v-model="formData.growId" type="text" placeholder="Enter your GrowID"
+              class="input input-bordered w-full" :class="{ 'input-error': errors.growId }" />
             <label v-if="errors.growId" class="label">
               <span class="label-text-alt text-error">{{ errors.growId }}</span>
             </label>
@@ -120,36 +115,23 @@ async function onFormSubmit() {
             <label class="label" for="password">
               <span class="label-text">Password</span>
             </label>
-            <input
-              id="password"
-              name="password"
-              v-model="formData.password"
-              type="password"
-              placeholder="Enter your password"
-              class="input input-bordered w-full"
-              :class="{ 'input-error': errors.password }"
-            />
+            <input id="password" name="password" v-model="formData.password" type="password"
+              placeholder="Enter your password" class="input input-bordered w-full"
+              :class="{ 'input-error': errors.password }" />
             <label v-if="errors.password" class="label">
               <span class="label-text-alt text-error">{{ errors.password }}</span>
             </label>
           </div>
 
           <div class="form-control mb-4">
-            <button
-              type="submit"
-              :disabled="isSubmitting"
-              class="btn btn-primary w-full"
-            >
+            <button type="submit" :disabled="isSubmitting" class="btn btn-primary w-full">
               <span v-if="isSubmitting" class="loading loading-spinner"></span>
               {{ isSubmitting ? 'Logging in...' : 'Login' }}
             </button>
           </div>
           <div class="form-control mt-4">
-            <a
-              href="/player/login/dashboard"
-              class="btn btn-link w-full"
-            >
-            Back
+            <a href="/player/login/dashboard" class="btn btn-link w-full">
+              Back
             </a>
           </div>
         </form>
@@ -157,4 +139,3 @@ async function onFormSubmit() {
     </div>
   </div>
 </template>
-

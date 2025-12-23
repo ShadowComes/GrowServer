@@ -1,14 +1,12 @@
 import type { APIRoute } from "astro";
 import { useDatabase } from "../../lib/database";
 
-/**
- * GET /api/example
- * Example API route demonstrating different ways to access the database
- */
+
+export const prerender = false;
+
 export const GET: APIRoute = async () => {
   try {
     const db = await useDatabase();
-
     // Access database in multiple ways:
     
     // 1. Using handlers
@@ -17,7 +15,7 @@ export const GET: APIRoute = async () => {
     
     // 2. Direct MongoDB access
     const collections = await db.db.listCollections().toArray();
-    
+
     // 3. Using auth
     const authInfo = {
       availableMethods: ["email", "discord"],

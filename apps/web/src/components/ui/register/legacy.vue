@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { ref, reactive } from "vue";
-import { z } from "zod";
 import { authVue } from "@/lib/auth-client";
+import { reactive, ref } from "vue";
 import VueTurnstile from "vue-turnstile";
+import { z } from "zod";
 
 const registerSchema = z.object({
   growId: z
@@ -80,20 +80,21 @@ async function onFormSubmit() {
       email: result.data.email,
       password: result.data.password,
       name: result.data.growId, // Use growId as name
-      fetchOptions: { 
-        headers: { 
+      fetchOptions: {
+        headers: {
           "x-captcha-response": captchaToken.value,
-        }, 
-      }, 
+        },
+      },
     });
 
     if (error) {
       showToast(error.message || "Registration failed", "error");
     } else {
       showToast("Registration successful! Redirecting...", "success");
+
       setTimeout(() => {
-        window.location.href = "/player/login/dashboard";
-      }, 1500);
+        window.location.href = "/player/growid/login/validate";
+      }, 1000);
     }
   } catch (error) {
     showToast("An error occurred. Please try again.", "error");
@@ -105,7 +106,8 @@ async function onFormSubmit() {
 
 <template>
   <div class="toast toast-top toast-end z-50">
-    <div v-for="toast in toasts" :key="toast.id" class="alert" :class="toast.type === 'success' ? 'alert-success' : 'alert-error'">
+    <div v-for="toast in toasts" :key="toast.id" class="alert"
+      :class="toast.type === 'success' ? 'alert-success' : 'alert-error'">
       <span>{{ toast.message }}</span>
     </div>
   </div>
@@ -115,20 +117,13 @@ async function onFormSubmit() {
       <div class="card-body">
         <h2 class="card-title text-2xl font-bold justify-center mb-4">Legacy Register</h2>
 
-        <form @submit.prevent="onFormSubmit" action="" method="post">
+        <form @submit.prevent="onFormSubmit" action="" autocomplete="off" method="post">
           <div class="form-control w-full mb-4">
             <label class="label" for="growId">
               <span class="label-text">GrowID</span>
             </label>
-            <input
-              id="growId"
-              name="growId"
-              v-model="formData.growId"
-              type="text"
-              placeholder="Enter your GrowID"
-              class="input input-bordered w-full"
-              :class="{ 'input-error': errors.growId }"
-            />
+            <input id="growId" name="growId" v-model="formData.growId" type="text" placeholder="Enter your GrowID"
+              class="input input-bordered w-full" :class="{ 'input-error': errors.growId }" />
             <label v-if="errors.growId" class="label">
               <span class="label-text-alt text-error">{{ errors.growId }}</span>
             </label>
@@ -138,15 +133,8 @@ async function onFormSubmit() {
             <label class="label" for="email">
               <span class="label-text">Email</span>
             </label>
-            <input
-              id="email"
-              name="email"
-              v-model="formData.email"
-              type="email"
-              placeholder="Enter your email"
-              class="input input-bordered w-full"
-              :class="{ 'input-error': errors.email }"
-            />
+            <input id="email" name="email" v-model="formData.email" type="email" placeholder="Enter your email"
+              class="input input-bordered w-full" :class="{ 'input-error': errors.email }" />
             <label v-if="errors.email" class="label">
               <span class="label-text-alt text-error">{{ errors.email }}</span>
             </label>
@@ -156,15 +144,9 @@ async function onFormSubmit() {
             <label class="label" for="password">
               <span class="label-text">Password</span>
             </label>
-            <input
-              id="password"
-              name="password"
-              v-model="formData.password"
-              type="password"
-              placeholder="Enter your password"
-              class="input input-bordered w-full"
-              :class="{ 'input-error': errors.password }"
-            />
+            <input id="password" name="password" v-model="formData.password" type="password"
+              placeholder="Enter your password" class="input input-bordered w-full"
+              :class="{ 'input-error': errors.password }" />
             <label v-if="errors.password" class="label">
               <span class="label-text-alt text-error">{{ errors.password }}</span>
             </label>
@@ -174,15 +156,9 @@ async function onFormSubmit() {
             <label class="label" for="confirmPassword">
               <span class="label-text">Confirm Password</span>
             </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              v-model="formData.confirmPassword"
-              type="password"
-              placeholder="Confirm your password"
-              class="input input-bordered w-full"
-              :class="{ 'input-error': errors.confirmPassword }"
-            />
+            <input id="confirmPassword" name="confirmPassword" v-model="formData.confirmPassword" type="password"
+              placeholder="Confirm your password" class="input input-bordered w-full"
+              :class="{ 'input-error': errors.confirmPassword }" />
             <label v-if="errors.confirmPassword" class="label">
               <span class="label-text-alt text-error">{{ errors.confirmPassword }}</span>
             </label>
@@ -194,21 +170,14 @@ async function onFormSubmit() {
 
 
           <div class="form-control mb-4">
-            <button
-              type="submit"
-              :disabled="isSubmitting"
-              class="btn btn-primary w-full"
-            >
+            <button type="submit" :disabled="isSubmitting" class="btn btn-primary w-full">
               <span v-if="isSubmitting" class="loading loading-spinner"></span>
               {{ isSubmitting ? 'Registering...' : 'Register' }}
             </button>
           </div>
           <div class="form-control mt-4">
-            <a
-              href="/player/login/dashboard"
-              class="btn btn-link w-full"
-            >
-            Back
+            <a href="/player/login/dashboard" class="btn btn-link w-full">
+              Back
             </a>
           </div>
         </form>

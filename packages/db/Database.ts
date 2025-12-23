@@ -1,20 +1,21 @@
+import { config } from "@growserver/config";
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { setupSeeds } from "./scripts/seeds";
-import { authConfig } from "./auth";
+import { admin as adminPlugin, captcha, emailOTP, username } from "better-auth/plugins";
 import { type Db, MongoClient } from "mongodb";
 import mongoose from "mongoose";
-import { 
-  PlayerModel, 
-  WorldModel, 
-  UserModel, 
-  SessionModel, 
-  AccountModel, 
-  VerificationModel 
-} from "./shared/schemas/schema";
 import { PlayerHandler } from "./handlers/PlayerHandler";
 import { WorldHandler } from "./handlers/WorldHandler";
-import { RedisHandler } from "./handlers/RedisHandler";
+import {
+  AccountModel,
+  ApiKeyModel,
+  PlayerModel,
+  SessionModel,
+  UserModel,
+  VerificationModel,
+  WorldModel,
+} from "./shared/schemas/schema";
+
 
 export class Database {
   public connection: MongoClient;
@@ -26,7 +27,8 @@ export class Database {
     User:         UserModel,
     Session:      SessionModel,
     Account:      AccountModel,
-    Verification: VerificationModel
+    Verification: VerificationModel,
+    ApiKey:       ApiKeyModel,
   };
 
   public player: PlayerHandler;
@@ -39,12 +41,71 @@ export class Database {
     this.dbUrl = dbUrl;
     this.connection = new MongoClient(dbUrl);
     this.db = this.connection.db();
-    this.auth = betterAuth(Object.assign({
-      database: mongodbAdapter(this.db, {
-        client:      this.connection,
-        transaction: false
-      }),
-    }, authConfig));
+    this.auth = betterAuth(
+      {
+        database: mongodbAdapter(this.db, {
+          client:      this.connection,
+          transaction: false,
+        }),
+        emailAndPassword: {
+          enabled:    true,
+          autoSignIn: true,
+        },
+
+        plugins: [
+          username(),
+          adminPlugin(),
+          emailOTP({
+            async sendVerificationOTP({ email, otp, type }) {
+              // Implement the sendVerificationOTP method to send the OTP to the user's email address
+              console.log(`Sending OTP to ${email}: ${otp} (type: ${type})`);
+            }
+          }),
+          captcha({
+            provider:  "cloudflare-turnstile", // or google-recaptcha, hcaptcha
+            secretKey: process.env.CLOUDFLARE_SECRET_KEY || "1x0000000000000000000000000000000AA"
+          }),
+
+        ],
+
+        socialProviders: {
+          discord: {
+            clientId:     process.env.DISCORD_CLIENT_ID as string,
+            clientSecret: process.env.DISCORD_CLIENT_SECRET  as string,
+          },
+        },
+
+        session: {
+          expiresIn: 60 * 60 * 24 * 7, // Expires in 7 days
+          updateAge: 60 * 60 * 24 // 1 day (every 1 day the session expiration is updated)
+          // cookieCache: {
+          //   enabled: true,
+          //   maxAge: 5 * 60, // cache duration in seconds
+          // },
+        },
+
+        experimental: {
+          joins: true
+        },
+        trustedOrigins: [`https://${config.web.loginUrl}`],
+        // user: {
+        //   additionalFields: {
+        //     playerId: {
+        //       type: "number",
+        //       required: false,
+        //       input: false
+        //     },
+        //     role: {
+        //       type: "string",
+        //       required: false,
+        //       input: false,
+        //       defaultValue: "2"
+        //     }
+        //   }
+        // }
+      }
+
+    );
 
     this.player = new PlayerHandler(this.connection, this.db);
     this.world = new WorldHandler(this.connection, this.db);
@@ -53,7 +114,7 @@ export class Database {
 
   public async connect() {
     if (this.isConnected) return;
-    
+
     await this.connection.connect();
     await mongoose.connect(this.dbUrl);
     this.isConnected = true;

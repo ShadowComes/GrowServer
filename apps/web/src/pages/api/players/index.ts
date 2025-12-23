@@ -1,18 +1,15 @@
+import { useDatabase } from "@/lib/database";
 import type { APIRoute } from "astro";
-import { useDatabase } from "../../../lib/database";
 
-/**
- * GET /api/players
- * Example: Fetch all players from the database
- */
+export const prerender = false;
+
 export const GET: APIRoute = async () => {
   try {
-    // Make some functional login/register even with discord -jad
     const db = await useDatabase();
-    
+
     // Using the player handler
     const players = await db.models.User.find();
-    
+
     return new Response(
       JSON.stringify({
         success: true,
@@ -41,18 +38,14 @@ export const GET: APIRoute = async () => {
   }
 };
 
-/**
- * POST /api/players
- * Example: Create a new player
- */
 export const POST: APIRoute = async ({ request }) => {
   try {
     const db = await useDatabase();
     const body = await request.json();
-    
+
     // Example: Use the database models directly
     const newPlayer = await db.models.Player.create(body);
-    
+
     return new Response(
       JSON.stringify({
         success: true,
