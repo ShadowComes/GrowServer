@@ -13,7 +13,7 @@ services:
     environment:
       - NODE_ENV=development
   db:
-    image: mongo:8.2.2
+    image: mongodb/mongodb-community-server:8.0.17-ubi8
     restart: unless-stopped
     environment:
       - MONGO_INITDB_ROOT_USERNAME=growserver
