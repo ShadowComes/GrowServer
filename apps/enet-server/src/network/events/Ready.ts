@@ -1,5 +1,7 @@
 import { IEvent } from "@/abstracts/IEvent";
+import type { Server } from "@/core/Server";
 import { Debug, ThrowError } from "@/decorators";
+import type { Database } from "@growserver/db";
 import logger from "@growserver/logger";
 
 export default class EventReady extends IEvent {
@@ -10,7 +12,7 @@ export default class EventReady extends IEvent {
 
   @Debug()
   @ThrowError("Failed to call Ready event")
-  public async execute(serverID: number, port: number) {
-    logger.info(`[S-${serverID}] Ready with port ${port}`);
+  public async execute(serverID: number, server: Server, database: Database) {
+    logger.info(`[S-${serverID}] Ready with port ${server.port}`);
   }
 }

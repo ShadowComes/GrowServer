@@ -20,14 +20,16 @@ export class Base {
   }
 
   public async init() {
+    await this.database.setup();
+    
     await this.manager.commands.init();
     await this.manager.events.init();
 
     for (const [i, s] of this.servers.entries()) {
-      s.server.on("connect", (netID) => this.manager.events.data.get("connect")?.execute(i, netID));
-      s.server.on("ready", () => this.manager.events.data.get("ready")?.execute(i, s.port));
-      s.server.on("raw", (netID, channelID, data) => this.manager.events.data.get("raw")?.execute(i, netID, channelID, data));
-      s.server.on("disconnect", (netID) => this.manager.events.data.get("disconnect")?.execute(i, netID));
+      s.server.on("connect", (netID) => this.manager.events.data.get("connect")?.execute(i, s, this.database, netID));
+      s.server.on("ready", () => this.manager.events.data.get("ready")?.execute(i, s, this.database));
+      s.server.on("raw", (netID, channelID, data) => this.manager.events.data.get("raw")?.execute(i, s, this.database, netID, channelID, data));
+      s.server.on("disconnect", (netID) => this.manager.events.data.get("disconnect")?.execute(i, s, this.database, netID));
 
       s.server.listen();
     }

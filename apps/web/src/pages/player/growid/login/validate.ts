@@ -12,7 +12,6 @@ export const GET: APIRoute = async ({ request, cookies }) => {
       headers: request.headers
     });
 
-    console.log({ session });
 
     if (!session?.session || !session?.user) {
       return new Response(

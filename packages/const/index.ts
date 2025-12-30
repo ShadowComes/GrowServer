@@ -13,7 +13,7 @@ export enum ServerState {
 
 export enum PacketTypes {
   HELLO = 1,
-  STR = 2,
+  TEXT = 2,
   ACTION = 3,
   TANK = 4,
 };
