@@ -176,9 +176,17 @@ async function init() {
   });
 
   if (process.env.RUNTIME_ENV === "node") {
+    const logonSsl = readFileSync(join(__dirname, "../../assets/ssl/server.key"));
+    const logonCert = readFileSync(join(__dirname, "../../assets/ssl/server.crt"));
+    
     serve(
       {
         fetch: app.fetch,
+        createServer,
+        serverOptions: {
+          key: logonSsl,
+          cert: logonCert,
+        },
         port: config.webFrontend.port,
         hostname: "0.0.0.0",
       },
@@ -187,11 +195,18 @@ async function init() {
       },
     );
   } else if (process.env.RUNTIME_ENV === "bun") {
+    const logonSsl = readFileSync(join(__dirname, "../../assets/ssl/server.key"));
+    const logonCert = readFileSync(join(__dirname, "../../assets/ssl/server.crt"));
+    
     logger.info(`Bun Login Page Server is running on port ${config.webFrontend.port}`);
     Bun.serve({
       fetch: app.fetch,
       port: config.webFrontend.port,
       hostname: "0.0.0.0",
+      tls: {
+        key: logonSsl,
+        cert: logonCert,
+      },
     });
   }
 }
