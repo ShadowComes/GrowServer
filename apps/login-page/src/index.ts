@@ -175,17 +175,10 @@ async function init() {
     return ctx.html(html);
   });
 
-  const fe = frontend();
-
   if (process.env.RUNTIME_ENV === "node") {
     serve(
       {
         fetch: app.fetch,
-        createServer,
-        serverOptions: {
-          key: fe.tls.key,
-          cert: fe.tls.cert,
-        },
         port: config.webFrontend.port,
         hostname: "0.0.0.0",
       },
@@ -194,15 +187,11 @@ async function init() {
       },
     );
   } else if (process.env.RUNTIME_ENV === "bun") {
-    logger.info(`Bun Login Page Server is running on port ${config.web.port}`);
+    logger.info(`Bun Login Page Server is running on port ${config.webFrontend.port}`);
     Bun.serve({
       fetch: app.fetch,
       port: config.webFrontend.port,
       hostname: "0.0.0.0",
-      tls: {
-        key: fe.tls.key,
-        cert: fe.tls.cert,
-      },
     });
   }
 }

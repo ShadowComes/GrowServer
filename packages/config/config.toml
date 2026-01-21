@@ -1,6 +1,6 @@
 [web]
 development = true
-address = "0.0.0.0"
+address = "145.241.238.219"
 port = 443
 ports = [17091]
 loginUrl = "145.241.238.219:8080"
