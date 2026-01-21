@@ -4,7 +4,7 @@ address = "0.0.0.0"
 port = 443
 ports = [17091]
 loginUrl = "login.growserver.app:8080"
-cdnUrl = "growserver-cache-woad.vercel.app"
+cdnUrl = "growserver-cache-ten.vercel.app"
 
 [web.maintenance]
 enable = false
