@@ -187,6 +187,7 @@ async function init() {
           cert: fe.tls.cert,
         },
         port: config.webFrontend.port,
+        hostname: "0.0.0.0",
       },
       (info) => {
         logger.info(`Node Login Page Server is running on port ${info.port}`);
@@ -197,6 +198,7 @@ async function init() {
     Bun.serve({
       fetch: app.fetch,
       port: config.webFrontend.port,
+      hostname: "0.0.0.0",
       tls: {
         key: fe.tls.key,
         cert: fe.tls.cert,
